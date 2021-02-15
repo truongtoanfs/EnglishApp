@@ -141,6 +141,11 @@ body {
   height: 0.1px;
   visibility: hidden;
 }
+.form-group__name {
+  color: var(--white-color);
+  margin: 4px 0 0;
+  font-size: 14px;
+}
 .form-group--submit {
   text-align: center;
 }
