@@ -22,7 +22,7 @@ app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb'})); */
  
 // Serve static files
-app.use(express.static('public'));
+app.use(express.static('docs'));
 
 // route init for special resources
 route(app);
