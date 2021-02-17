@@ -1,0 +1,28 @@
+{
+  "name": "englishapp",
+  "version": "1.0.0",
+  "description": "This app will help people remember new vocabulary a way easy\r # Features\r + add image for new vocabulary from local storage\r + automatical add voice\r + test your memory\r + remove/recovey your words learned\r + send notice the new word to mail",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "nodemon --inspect src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/truongtoanfs/EnglishApp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/truongtoanfs/EnglishApp/issues"
+  },
+  "homepage": "https://github.com/truongtoanfs/EnglishApp#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.11.16"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
