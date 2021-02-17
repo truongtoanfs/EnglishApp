@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/truongtoanfs/EnglishApp/issues"
   },
-  "homepage": "https://github.com/truongtoanfs/EnglishApp",
+  "homepage": ".",
   "dependencies": {
     "express": "^4.17.1",
     "mongoose": "^5.11.16"
