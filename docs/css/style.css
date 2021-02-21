@@ -21,6 +21,7 @@ body {
   margin: 2px 5px;
   min-width: 92px;
   border: 1px solid #cccccc;
+  outline: none;
   border-radius: 4px;
   cursor: pointer;
 }
@@ -98,6 +99,18 @@ body {
   opacity: 0;
 }
 /* item head */
+.trash-icon {
+  color: var(--white-color);
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: all 0.2s ease-in;
+}
+.trash-icon:hover {
+  opacity: 1;
+}
 .audio-icon {
   color: var(--white-color);
   margin: 2rem 0;
@@ -109,7 +122,7 @@ body {
   transform: scale(1.02);
 }
 .btn--head {
-  transition: all 0.2s ease-in;
+  transition: all 0.36s ease-out;
 }
 .btn--head:hover {
   opacity: 0.9;

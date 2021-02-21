@@ -1,4 +1,3 @@
-
 /* ########## variables ######### */
 const vocabulariesAPI = 'http://localhost:3000/vocabulary';
 const content = document.querySelector('.content');
@@ -23,6 +22,9 @@ class UI {
         <div class="item">
           <img src=${item.image} alt=${item.answer} class="item-img">
           <div class="absolute-center item-head">
+            <span class="trash-icon" data-id=${item._id}>
+              <i class="fas fa-trash-alt fa-2x"></i>
+            </span>
             <span class="audio-icon">
               <i class="fas fa-volume-up fa-4x"></i>
             </span>
@@ -51,16 +53,16 @@ class UI {
       <form class="absolute-center create-item">
         <div class="form-group">
           <p class="form-group__title">Type your Vocabulary:</p>
-          <input id="answer-input" class="form-input" type="text" required>
+          <input id="answer-input" class="form-input" type="text">
         </div>
         <div class="form-group">
-          <p class="form-group__title">Select a image file:</p>
+          <p class="form-group__title">Select an image file:</p>
           <label class="form-input" for="image"><i class="fas fa-upload"></i>Choose a file</label>
-          <input class="form-group__file" type="file" name="image" id="image">
+          <input class="form-group__file" type="file" name="image" id="image" accept="image/*">
           <p class="form-group__name"></p>
         </div>
         <div class="form-group form-group--submit">
-          <button type="submit" id="send-form" class="btn btn--summit">Add</button>
+          <button type="submit" id="send-form" class="btn btn--head btn--summit">Add</button>
         </div>
       </form>
     `
@@ -76,12 +78,23 @@ class UI {
       nameElm.innerHTML = fileNameAndSize;
     })
   }
-  // Create card
+  handleCard() {
+    // create card
+    this.createCard();
+    // handle remove card
+    const trashIcons = document.querySelectorAll('.trash-icon');
+    trashIcons.forEach(item => {
+      item.addEventListener('click', () => {
+        this.removeCard(item);
+      })
+    })
+  }
   createCard() {
+    // collection data
     const data = {};
-    /* take image data */
-    const imgFile = document.querySelector('.form-group__file');
-    imgFile.addEventListener('change', (event) => {
+    // take data from image file
+    const fileElm = document.querySelector('.form-group__file');
+    fileElm.addEventListener('change', function(event) {
       const file =  event.target.files[0];
       const reader = new FileReader();
       reader.onloadend = function() {
@@ -92,31 +105,90 @@ class UI {
 
     const formSendBtn = document.querySelector('#send-form');
     formSendBtn.addEventListener('click', (event) => {
-      /* take data from input form */
-      const answer = document.querySelector('#answer-input');
-      if (answer.value === '') {
-        return console.error('please, type input file!');
-      }
       event.preventDefault();
-      data.answer = answer.value;
-      
 
-      fetch(vocabulariesAPI, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
-      /* .then(response => response.json())
-      .then(data => {
-        console.log('Success:', data);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      }) */
+      // take data from answer input
+      const answer = document.querySelector('#answer-input').value;
+      data.answer = answer;
+      if (!data.answer) {
+        return alert('please, type your vocabulary!');
+      } else if (!data.image) {
+        return alert('please, select an image file!');
+      }
+
+      this.postData(vocabulariesAPI, data)
+        .then(data => {
+          // add to DOM
+          const createElm = document.querySelector('.item--user');
+          const itemElm = document.createElement('div');
+          itemElm.classList.add('item');
+          itemElm.innerHTML = `
+            <img src=${data.image} alt=${data.answer} class="item-img">
+            <div class="absolute-center item-head">
+              <span class="trash-icon" data-id=${data._id}>
+                <i class="fas fa-trash-alt fa-2x"></i>
+              </span>
+              <span class="audio-icon">
+                <i class="fas fa-volume-up fa-4x"></i>
+              </span>
+              <button class="btn btn--head">Go</button>
+            </div>
+            <div class="absolute-center item-tail">
+              <span class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
+              <input class="form-input item-tail__answer" type="text" placeholder="Type your answer...">
+              <p class="error-message">Your answer is wrong!</p>
+              <button class="btn btn-match">Match</button>
+            </div>
+            <div class="absolute-center item-success">
+              <span class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
+              <p class="success-message">Your answer is right!</p>
+              <button class="btn btn-delete">Delete</button>
+            </div>
+          `
+          content.insertBefore(itemElm, createElm);
+          // reset createElm
+          createElm.querySelector('#answer-input').value = '';
+          createElm.querySelector('.form-group__name').innerHTML = '';
+          
+          // add event click to trash icon
+          const trashIcon = itemElm.querySelector('.trash-icon');
+          trashIcon.addEventListener('click', () => {
+            this.removeCard(trashIcon);
+          })
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        })
+        
     })
   }
+  async postData(vocabulariesAPI, data) {
+    const response = await fetch(vocabulariesAPI, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    return response.json();
+  }
+
+  removeCard(trashIcon) {
+    // remove item in database
+    fetch(vocabulariesAPI + '/' + trashIcon.dataset.id, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((response) => {
+      console.log(response);
+    })
+      
+    // remove item in DOM
+    const card = trashIcon.parentElement.parentElement;
+    card.remove();
+  }
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -128,7 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ui.displayVocabularies(vocabularies);
   })
   .then(() => {
-    ui.createCard();
+    ui.handleCard();
   })
 
 })

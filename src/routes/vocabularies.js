@@ -7,5 +7,6 @@ const vocabularyController = require('../app/controllers/VocabularyController');
 
 router.get('/', vocabularyController.index);
 router.post('/', vocabularyController.store);
+router.delete('/:id', vocabularyController.delete);
 
 module.exports = router;

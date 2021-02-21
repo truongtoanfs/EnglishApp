@@ -5,7 +5,7 @@ const Vocabulary = require('../models/Vocabulary');
 class VocabularyController {
   // [GET] /vocabulary
   index(req, res) {
-    Vocabulary.find({}, function (err, vocabularies) {
+    Vocabulary.find({}, function(err, vocabularies) {
       if (!err) {
         res.json(vocabularies);
       }
@@ -16,10 +16,16 @@ class VocabularyController {
   }
   // [POST] /vocabulary
   store(req, res) {
-    //res.json(req.body);
     const vocabulary = new Vocabulary(req.body);
-    vocabulary.save();
-    console.log('vocabulary saved!!!!!');
+    vocabulary.save().then(saveDoc => {
+      res.json(saveDoc);
+    })
+  }
+  // [DELETE] /vocabulary
+  delete(req, res) {
+    Vocabulary.deleteOne({ _id: req.params.id}, function (err) {
+      if(err) res.json(err);
+    })
   }
 }
 
