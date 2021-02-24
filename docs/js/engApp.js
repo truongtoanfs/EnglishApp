@@ -88,6 +88,15 @@ class UI {
         this.removeCard(item);
       })
     })
+    // handle speaker icon
+    const speakerIcons = document.querySelectorAll('.audio-icon');
+    speakerIcons.forEach(speaker => {
+      speaker.addEventListener('click', () => {
+        const cardElm = speaker.parentElement.parentElement;
+        const textAnswer = cardElm.querySelector('.item-img').getAttribute("alt");
+        this.say(textAnswer);
+      })
+    })
   }
   createCard() {
     // collection data
@@ -155,6 +164,11 @@ class UI {
           trashIcon.addEventListener('click', () => {
             this.removeCard(trashIcon);
           })
+          // add event click to speaker
+          const speakerIcon = itemElm.querySelector('.audio-icon');
+          speakerIcon.addEventListener('click', () => {
+            this.say(data.answer);
+          })
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -187,6 +201,14 @@ class UI {
     // remove item in DOM
     const card = trashIcon.parentElement.parentElement;
     card.remove();
+  }
+
+  say(text) {
+    const utterThis = new SpeechSynthesisUtterance(text);
+    const synth = window.speechSynthesis;
+    const voices = synth.getVoices();
+    utterThis.voice = voices.find((voice => voice.default === true));
+    synth.speak(utterThis);
   }
 
 }
