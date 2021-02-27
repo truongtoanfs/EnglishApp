@@ -51,6 +51,11 @@ body {
   border: 1px solid #000000;
   background-color: var(--white-color);
 }
+
+.d-none {
+  display: none !important;
+}
+
 /* header section */
 .header-logo {
   color: var(--logo-color);
@@ -166,11 +171,6 @@ body {
   margin: 1rem auto 0;
 }
 
-.item-tail,
-.item-success {
-  display: none !important;
-}
-
 /* item tail */
 .item-tail {
   padding: 2rem;
@@ -188,6 +188,10 @@ body {
 }
 .item-tail__answer {
   padding: 8px;
+  outline: none;
+}
+.wrong-answer .item-tail__answer {
+  border: 2px solid var(--red-color);
 }
 .error-message {
   align-self: flex-start;
@@ -197,6 +201,9 @@ body {
   padding-left: 10px;
   font-size: 14px;
   visibility: hidden;
+}
+.wrong-answer .error-message {
+  visibility: visible;
 }
 /* item success */
 .success-message {

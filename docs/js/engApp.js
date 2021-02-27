@@ -18,26 +18,28 @@ class UI {
   displayVocabularies(vocabularies) {
     let html = '';
     vocabularies.forEach(item => {
+      let display = 'd-none';
+      if (item.type === 'vocabulary') {display = ''};
       html += `
-        <div class="item">
+        <div class="item ${item.type} ${display}" data-id=${item._id}>
           <img src=${item.image} alt=${item.answer} class="item-img">
           <div class="absolute-center item-head">
-            <span class="trash-icon" data-id=${item._id}>
+            <span class="trash-icon">
               <i class="fas fa-trash-alt fa-2x"></i>
             </span>
             <span class="audio-icon">
               <i class="fas fa-volume-up fa-4x"></i>
             </span>
-            <button class="btn btn--head">Go</button>
+            <button id="btn-go" class="btn btn--head">Go</button>
           </div>
-          <div class="absolute-center item-tail">
-            <span class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
+          <div class="absolute-center item-tail d-none">
+            <span id="close-tail" class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
             <input class="form-input item-tail__answer" type="text" placeholder="Type your answer...">
             <p class="error-message">Your answer is wrong!</p>
-            <button class="btn btn-match">Match</button>
+            <button  id="match-btn" class="btn btn-match">Match</button>
           </div>
-          <div class="absolute-center item-success">
-            <span class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
+          <div class="absolute-center item-success d-none">
+            <span id="close-success" class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
             <p class="success-message">Your answer is right!</p>
             <button class="btn btn-delete">Delete</button>
           </div>
@@ -77,30 +79,50 @@ class UI {
       const fileNameAndSize = `${fileName} - ${fileSize}KB`;
       nameElm.innerHTML = fileNameAndSize;
     })
+
+    // handle filter features
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.filter-btn.btn--active').classList.remove('btn--active');
+        btn.classList.add('btn--active');
+
+        const value = btn.dataset.filter;
+        const cardElms = document.querySelectorAll('.item:not(.item--user)');
+        cardElms.forEach(card => {
+          if (value === 'recycleBin' || value === 'all') {
+            document.querySelector('.item--user').classList.add('d-none');
+          } else {
+            document.querySelector('.item--user').classList.remove('d-none');
+          }
+          if (value === 'all') {
+            card.classList.remove('d-none');
+          } else if (!card.classList.contains(value)) {
+            card.classList.add('d-none');
+          } else {
+            card.classList.remove('d-none');
+          }
+        })
+      })
+    })
   }
-  handleCard() {
+
+  // use card
+  useCard() {
     // create card
     this.createCard();
-    // handle remove card
-    const trashIcons = document.querySelectorAll('.trash-icon');
-    trashIcons.forEach(item => {
-      item.addEventListener('click', () => {
-        this.removeCard(item);
-      })
-    })
-    // handle speaker icon
-    const speakerIcons = document.querySelectorAll('.audio-icon');
-    speakerIcons.forEach(speaker => {
-      speaker.addEventListener('click', () => {
-        const cardElm = speaker.parentElement.parentElement;
-        const textAnswer = cardElm.querySelector('.item-img').getAttribute("alt");
-        this.say(textAnswer);
-      })
+    // handle card
+    const cardItems = document.querySelectorAll('.item:not(.item--user)');
+    cardItems.forEach(card => {
+      this.handleCard(card);
     })
   }
+
   createCard() {
     // collection data
-    const data = {};
+    const data = {
+      type: 'vocabulary',
+    };
     // take data from image file
     const fileElm = document.querySelector('.form-group__file');
     fileElm.addEventListener('change', function(event) {
@@ -130,26 +152,27 @@ class UI {
           // add to DOM
           const createElm = document.querySelector('.item--user');
           const itemElm = document.createElement('div');
-          itemElm.classList.add('item');
+          itemElm.classList.add('item', 'vocabulary');
+          itemElm.setAttribute('data-id', data._id);
           itemElm.innerHTML = `
             <img src=${data.image} alt=${data.answer} class="item-img">
             <div class="absolute-center item-head">
-              <span class="trash-icon" data-id=${data._id}>
+              <span class="trash-icon">
                 <i class="fas fa-trash-alt fa-2x"></i>
               </span>
               <span class="audio-icon">
                 <i class="fas fa-volume-up fa-4x"></i>
               </span>
-              <button class="btn btn--head">Go</button>
+              <button id="btn-go" class="btn btn--head">Go</button>
             </div>
-            <div class="absolute-center item-tail">
-              <span class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
+            <div class="absolute-center item-tail d-none">
+              <span id="close-tail" class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
               <input class="form-input item-tail__answer" type="text" placeholder="Type your answer...">
               <p class="error-message">Your answer is wrong!</p>
-              <button class="btn btn-match">Match</button>
+              <button  id="match-btn" class="btn btn-match">Match</button>
             </div>
-            <div class="absolute-center item-success">
-              <span class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
+            <div class="absolute-center item-success d-none">
+              <span id="close-success" class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
               <p class="success-message">Your answer is right!</p>
               <button class="btn btn-delete">Delete</button>
             </div>
@@ -159,16 +182,8 @@ class UI {
           createElm.querySelector('#answer-input').value = '';
           createElm.querySelector('.form-group__name').innerHTML = '';
           
-          // add event click to trash icon
-          const trashIcon = itemElm.querySelector('.trash-icon');
-          trashIcon.addEventListener('click', () => {
-            this.removeCard(trashIcon);
-          })
-          // add event click to speaker
-          const speakerIcon = itemElm.querySelector('.audio-icon');
-          speakerIcon.addEventListener('click', () => {
-            this.say(data.answer);
-          })
+          // handle card
+          this.handleCard(itemElm);
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -188,8 +203,9 @@ class UI {
   }
 
   removeCard(trashIcon) {
+    const card = trashIcon.parentElement.parentElement;
     // remove item in database
-    fetch(vocabulariesAPI + '/' + trashIcon.dataset.id, {
+    fetch(vocabulariesAPI + '/' + card.dataset.id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -199,8 +215,22 @@ class UI {
     })
       
     // remove item in DOM
-    const card = trashIcon.parentElement.parentElement;
     card.remove();
+  }
+
+  updateCard(card) {
+    // update item in database
+    fetch(vocabulariesAPI + '/' + card.dataset.id, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'recycleBin'
+      })
+    }).then((response) => {
+      console.log(response);
+    })
   }
 
   say(text) {
@@ -209,6 +239,90 @@ class UI {
     const voices = synth.getVoices();
     utterThis.voice = voices.find((voice => voice.default === true));
     synth.speak(utterThis);
+  }
+
+  toggleCard(card1, card2) {
+    card1.classList.toggle('d-none');
+    card2.classList.toggle('d-none');
+  }
+
+  checkAnswer(card) {
+    const textInput = card.querySelector('.item-tail__answer').value.trim();
+    const answerText = card.querySelector('.item-img').getAttribute('alt');
+    const answer = new RegExp('^'+ answerText + '$', 'i');
+    const successCard = card.querySelector('.item-success');
+    const tailCard = card.querySelector('.item-tail');
+    if (answer.test(textInput)) {
+      card.querySelector('.item-tail__answer').value = '';
+      this.toggleCard(successCard, tailCard);
+    } else {
+      tailCard.classList.add('wrong-answer');
+    }
+  }
+
+  handleCard(card) {
+    const trashIcon = card.querySelector('.trash-icon');
+    const speakerIcon = card.querySelector('.audio-icon');
+    const goBtn = card.querySelector('#btn-go');
+    const closeTail = card.querySelector('#close-tail');
+    const closeSuccess = card.querySelector('#close-success');
+    const headCard = card.querySelector('.item-head');
+    const tailCard = card.querySelector('.item-tail');
+    const successCard = card.querySelector('.item-success');
+    const matchBtn = card.querySelector('#match-btn');
+    const answerInput = card.querySelector('.item-tail__answer');
+    const deleteBtn = card.querySelector('.btn-delete');
+
+    // add event click to trash icon
+    trashIcon.addEventListener('click', () => {
+      this.removeCard(trashIcon);
+    })
+
+    // add event click to speaker
+    speakerIcon.addEventListener('click', () => {
+      const answerText = card.querySelector('.item-img').getAttribute('alt');
+      this.say(answerText);
+    })
+
+    // add event click to go button
+    goBtn.addEventListener('click', () => {
+      this.toggleCard(headCard, tailCard);
+    })
+
+    // close tail card
+    closeTail.addEventListener('click', () => {
+      this.toggleCard(headCard, tailCard);
+    })
+
+    // handle match answer
+    matchBtn.addEventListener('click', () => {
+      this.checkAnswer(card);
+    })
+    answerInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        this.checkAnswer(card);
+      }
+    })
+    answerInput.addEventListener('input', (event) => {
+      if (tailCard.classList.contains('wrong-answer') && event.key !== 'Enter') {
+        tailCard.classList.remove('wrong-answer');
+      }
+    })
+    // handle close success btn
+    closeSuccess.addEventListener('click', () => {
+      this.toggleCard(headCard, successCard);
+    })
+    // handle delete card
+    deleteBtn.addEventListener('click', () => {
+      const card = deleteBtn.parentElement.parentElement;
+      // update card in db
+      this.updateCard(card);
+      // add class recycleBin to card
+      card.classList.remove('vocabulary');
+      card.classList.add('recycleBin');
+      // remove item in DOM
+      card.remove();
+    })
   }
 
 }
@@ -222,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ui.displayVocabularies(vocabularies);
   })
   .then(() => {
-    ui.handleCard();
+    ui.useCard();
   })
 
 })

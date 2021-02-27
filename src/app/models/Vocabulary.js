@@ -6,7 +6,8 @@ const Schema = mongoose.Schema;
 
 const Vocabulary = new Schema({
   answer: String,
-  image: String
+  image: String,
+  type: String
 }, {
   timestamps: true
 });

@@ -27,6 +27,13 @@ class VocabularyController {
       if(err) res.json(err);
     })
   }
+  // [PATCH] /vocabulary
+  update(req, res) {
+    Vocabulary.updateOne({ _id: req.params.id}, req.body)
+      .then(doc => {
+        res.json(doc);
+      })
+  }
 }
 
 module.exports = new VocabularyController();

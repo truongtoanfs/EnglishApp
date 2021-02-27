@@ -16,9 +16,9 @@
   <main class="main">
     <div class="container">
       <nav class="navbar">
-        <button class="btn btn--active">Vocabulary</button>
-        <button class="btn">Recycle Bin</button>
-        <button class="btn">All</button>
+        <button class="btn filter-btn btn--active" data-filter="vocabulary">Vocabulary</button>
+        <button class="btn filter-btn" data-filter="recycleBin">Recycle Bin</button>
+        <button class="btn filter-btn" data-filter="all">All</button>
       </nav>
       <section class="content">
         <!-- <div class="item">
@@ -32,14 +32,14 @@
             </span>
             <button class="btn btn--head">Go</button>
           </div>
-          <div class="absolute-center item-tail">
-            <span class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
+          <div class="absolute-center item-tail d-none">
+            <span id="close-tail" class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
             <input class="form-input item-tail__answer" type="text" placeholder="Type your answer...">
             <p class="error-message">Your answer is wrong!</p>
-            <button class="btn btn-match">Match</button>
+            <button id="match-btn" class="btn btn-match">Match</button>
           </div>
-          <div class="absolute-center item-success">
-            <span class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
+          <div class="absolute-center item-success d-none">
+            <span id="close-success" class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
             <p class="success-message">Your answer is right!</p>
             <button class="btn btn-delete">Delete</button>
           </div>
