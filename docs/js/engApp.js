@@ -18,6 +18,7 @@ class UI {
   displayVocabularies(vocabularies) {
     let html = '';
     vocabularies.forEach(item => {
+      // setup display default is vocabulary tab
       let display = 'd-none';
       if (item.type === 'vocabulary') {display = ''};
       html += `
