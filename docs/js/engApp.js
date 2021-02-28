@@ -85,17 +85,18 @@ class UI {
     const filterBtns = document.querySelectorAll('.filter-btn');
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
+        const value = btn.dataset.filter;
+        const cardElms = document.querySelectorAll('.item:not(.item--user)');
+
         document.querySelector('.filter-btn.btn--active').classList.remove('btn--active');
         btn.classList.add('btn--active');
 
-        const value = btn.dataset.filter;
-        const cardElms = document.querySelectorAll('.item:not(.item--user)');
+        if (value === 'recycleBin' || value === 'all') {
+          document.querySelector('.item--user').classList.add('d-none');
+        } else {
+          document.querySelector('.item--user').classList.remove('d-none');
+        }
         cardElms.forEach(card => {
-          if (value === 'recycleBin' || value === 'all') {
-            document.querySelector('.item--user').classList.add('d-none');
-          } else {
-            document.querySelector('.item--user').classList.remove('d-none');
-          }
           if (value === 'all') {
             card.classList.remove('d-none');
           } else if (!card.classList.contains(value)) {
