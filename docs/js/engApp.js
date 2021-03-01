@@ -1,5 +1,6 @@
 /* ########## variables ######### */
 const vocabulariesAPI = 'https://toan-english-app.herokuapp.com/vocabulary';
+//const vocabulariesAPI = 'http://localhost:3000/vocabulary';
 const content = document.querySelector('.content');
 
 class Vocabularies {
@@ -19,8 +20,14 @@ class UI {
     let html = '';
     vocabularies.forEach(item => {
       // setup display default is vocabulary tab
-      let display = 'd-none';
-      if (item.type === 'vocabulary') {display = ''};
+      let display = '';
+      let lastBtn = 'btn-delete';
+      let lastBtnText = 'Delete';
+      if (item.type === 'recycleBin') {
+        display = 'd-none';
+        lastBtn = 'btn-vocabulary';
+        lastBtnText = 'Vocabulary';
+      };
       html += `
         <div class="item ${item.type} ${display}" data-id=${item._id}>
           <img src=${item.image} alt=${item.answer} class="item-img">
@@ -42,7 +49,7 @@ class UI {
           <div class="absolute-center item-success d-none">
             <span id="close-success" class="btn-close"><i class="far fa-window-close fa-2x"></i></span>
             <p class="success-message">Your answer is right!</p>
-            <button class="btn btn-delete">Delete</button>
+            <button class="btn ${lastBtn}">${lastBtnText}</button>
           </div>
         </div>
       `
@@ -90,19 +97,24 @@ class UI {
 
         document.querySelector('.filter-btn.btn--active').classList.remove('btn--active');
         btn.classList.add('btn--active');
-
+        // display none item--userin recycle Bin and all tab
         if (value === 'recycleBin' || value === 'all') {
           document.querySelector('.item--user').classList.add('d-none');
         } else {
           document.querySelector('.item--user').classList.remove('d-none');
         }
+
+        // event tab shift
         cardElms.forEach(card => {
+          const successCard = card.querySelector('.item-success');
+          const lastBtn = successCard.querySelector('button');
+          console.log(lastBtn);
           if (value === 'all') {
+            lastBtn.classList.add('d-none');
             card.classList.remove('d-none');
-          } else if (!card.classList.contains(value)) {
-            card.classList.add('d-none');
           } else {
-            card.classList.remove('d-none');
+            lastBtn.classList.remove('d-none');
+            (!card.classList.contains(value)) ? card.classList.add('d-none') : card.classList.remove('d-none');
           }
         })
       })
@@ -220,7 +232,7 @@ class UI {
     card.remove();
   }
 
-  updateCard(card) {
+  updateCard(card, content) {
     // update item in database
     fetch(vocabulariesAPI + '/' + card.dataset.id, {
       method: 'PATCH',
@@ -228,7 +240,7 @@ class UI {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        type: 'recycleBin'
+        type: content,
       })
     }).then((response) => {
       console.log(response);
@@ -274,6 +286,7 @@ class UI {
     const matchBtn = card.querySelector('#match-btn');
     const answerInput = card.querySelector('.item-tail__answer');
     const deleteBtn = card.querySelector('.btn-delete');
+    const vocabularyBtn = card.querySelector('.btn-vocabulary');
 
     // add event click to trash icon
     trashIcon.addEventListener('click', () => {
@@ -314,17 +327,39 @@ class UI {
     closeSuccess.addEventListener('click', () => {
       this.toggleCard(headCard, successCard);
     })
-    // handle delete card
-    deleteBtn.addEventListener('click', () => {
-      const card = deleteBtn.parentElement.parentElement;
-      // update card in db
-      this.updateCard(card);
-      // add class recycleBin to card
-      card.classList.remove('vocabulary');
-      card.classList.add('recycleBin');
-      // remove item in DOM
-      card.remove();
-    })
+    if (deleteBtn) {
+      // handle delete card
+      deleteBtn.addEventListener('click', () => {
+        const card = deleteBtn.parentElement.parentElement;
+        // update card in db
+        this.updateCard(card, 'recycleBin');
+        // add class recycleBin to card
+        card.classList.remove('vocabulary');
+        card.classList.add('recycleBin');
+        // change value of this button
+        deleteBtn.textContent = 'Vocabulary';
+        deleteBtn.setAttribute('class', 'btn btn-vocabulary');
+        // remove item in DOM
+        card.classList.add('d-none');
+        this.toggleCard(headCard, successCard);
+      })
+    } else {
+      // handle vocabulary btn
+      vocabularyBtn.addEventListener('click', () => {
+        const card = vocabularyBtn.parentElement.parentElement;
+        // update card in db
+        this.updateCard(card, 'vocabulary');
+        // add class vocabulary to card
+        card.classList.add('vocabulary');
+        card.classList.remove('recycleBin');
+        // change value of this button
+        vocabularyBtn.textContent = 'Delete';
+        vocabularyBtn.setAttribute('class', 'btn btn-delete');
+        // remove item in DOM
+        card.classList.add('d-none');
+        this.toggleCard(headCard, successCard);
+      })
+    }
   }
 
 }
