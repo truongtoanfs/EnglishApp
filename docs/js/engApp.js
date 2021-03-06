@@ -16,7 +16,7 @@ class Vocabularies {
 }
 
 class UI {
-  displayVocabularies(vocabularies) {
+  displayCards(vocabularies) {
     let html = '';
     vocabularies.forEach(item => {
       // setup display default is vocabulary tab
@@ -87,7 +87,9 @@ class UI {
       const fileNameAndSize = `${fileName} - ${fileSize}KB`;
       nameElm.innerHTML = fileNameAndSize;
     })
+  }
 
+  switchTabs() {
     // handle filter features
     const filterBtns = document.querySelectorAll('.filter-btn');
     filterBtns.forEach(btn => {
@@ -97,7 +99,7 @@ class UI {
 
         document.querySelector('.filter-btn.btn--active').classList.remove('btn--active');
         btn.classList.add('btn--active');
-        // display none item--userin recycle Bin and all tab
+        // display none item--user in recycle Bin and all tab
         if (value === 'recycleBin' || value === 'all') {
           document.querySelector('.item--user').classList.add('d-none');
         } else {
@@ -106,9 +108,9 @@ class UI {
 
         // event tab shift
         cardElms.forEach(card => {
+          // handle display card
           const successCard = card.querySelector('.item-success');
           const lastBtn = successCard.querySelector('button');
-          console.log(lastBtn);
           if (value === 'all') {
             lastBtn.classList.add('d-none');
             card.classList.remove('d-none');
@@ -274,6 +276,38 @@ class UI {
     }
   }
 
+  moveCard(button) {
+    const card = button.parentElement.parentElement;
+    const headCard = card.querySelector('.item-head');
+    const successCard = card.querySelector('.item-success');
+
+    if (button.classList.contains('btn-delete')) {
+      // update card in db
+      this.updateCard(card, 'recycleBin');
+      // add class recycleBin to card
+      card.classList.remove('vocabulary');
+      card.classList.add('recycleBin');
+      // remove item in DOM
+      card.classList.add('d-none');
+      this.toggleCard(headCard, successCard);
+      // change value of this button
+      button.textContent = 'Vocabulary';
+      button.setAttribute('class', 'btn btn-vocabulary');
+    } else {
+      // update card in db
+      this.updateCard(card, 'vocabulary');
+      // add class vocabulary to card
+      card.classList.add('vocabulary');
+      card.classList.remove('recycleBin');
+      // remove item in DOM
+      card.classList.add('d-none');
+      this.toggleCard(headCard, successCard);
+      // change value of this button
+      button.textContent = 'Delete';
+      button.setAttribute('class', 'btn btn-delete');
+    }
+  }
+
   handleCard(card) {
     const trashIcon = card.querySelector('.trash-icon');
     const speakerIcon = card.querySelector('.audio-icon');
@@ -285,8 +319,7 @@ class UI {
     const successCard = card.querySelector('.item-success');
     const matchBtn = card.querySelector('#match-btn');
     const answerInput = card.querySelector('.item-tail__answer');
-    const deleteBtn = card.querySelector('.btn-delete');
-    const vocabularyBtn = card.querySelector('.btn-vocabulary');
+    const cardMoveBtn = successCard.querySelector('button');
 
     // add event click to trash icon
     trashIcon.addEventListener('click', () => {
@@ -327,39 +360,11 @@ class UI {
     closeSuccess.addEventListener('click', () => {
       this.toggleCard(headCard, successCard);
     })
-    if (deleteBtn) {
-      // handle delete card
-      deleteBtn.addEventListener('click', () => {
-        const card = deleteBtn.parentElement.parentElement;
-        // update card in db
-        this.updateCard(card, 'recycleBin');
-        // add class recycleBin to card
-        card.classList.remove('vocabulary');
-        card.classList.add('recycleBin');
-        // change value of this button
-        deleteBtn.textContent = 'Vocabulary';
-        deleteBtn.setAttribute('class', 'btn btn-vocabulary');
-        // remove item in DOM
-        card.classList.add('d-none');
-        this.toggleCard(headCard, successCard);
-      })
-    } else {
-      // handle vocabulary btn
-      vocabularyBtn.addEventListener('click', () => {
-        const card = vocabularyBtn.parentElement.parentElement;
-        // update card in db
-        this.updateCard(card, 'vocabulary');
-        // add class vocabulary to card
-        card.classList.add('vocabulary');
-        card.classList.remove('recycleBin');
-        // change value of this button
-        vocabularyBtn.textContent = 'Delete';
-        vocabularyBtn.setAttribute('class', 'btn btn-delete');
-        // remove item in DOM
-        card.classList.add('d-none');
-        this.toggleCard(headCard, successCard);
-      })
-    }
+    
+    // handle shift card
+    cardMoveBtn.addEventListener('click', () => {
+      this.moveCard(cardMoveBtn);
+    })
   }
 
 }
@@ -370,9 +375,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   vocabularies.getVocabularies()
   .then(vocabularies => {
-    ui.displayVocabularies(vocabularies);
+    ui.displayCards(vocabularies);
   })
   .then(() => {
+    ui.switchTabs();
     ui.useCard();
   })
 

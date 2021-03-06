@@ -163,6 +163,10 @@ body {
   color: var(--white-color);
   margin: 4px 0 0;
   font-size: 14px;
+  /* limited in oneline */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .form-group--submit {
   text-align: center;
