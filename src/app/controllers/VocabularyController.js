@@ -23,9 +23,11 @@ class VocabularyController {
   }
   // [DELETE] /vocabulary
   delete(req, res) {
-    Vocabulary.deleteOne({ _id: req.params.id}, function (err) {
-      if(err) res.json(err);
-    })
+    Vocabulary.deleteOne({ _id: req.params.id}).then(function(){ 
+    res.json("Data deleted"); // Success 
+  }).catch(function(error){ 
+    res.json(error); // Failure 
+  }); 
   }
   // [PATCH] /vocabulary
   update(req, res) {
