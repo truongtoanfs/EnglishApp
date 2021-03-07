@@ -60,6 +60,9 @@ class UI {
     div.classList.add('item', 'item--user');
     div.innerHTML = `
       <img src="./img/img-add.jpg" alt="intuitive" class="item-img">
+      <div class="loading-wrap d-none">
+        <img src="./img/loading.gif" alt="intuitive" class="loading-icon">
+      </div>
       <form class="absolute-center create-item">
         <div class="form-group">
           <p class="form-group__title">Type your Vocabulary:</p>
@@ -166,6 +169,10 @@ class UI {
     formSendBtn.addEventListener('click', (event) => {
       event.preventDefault();
 
+      // show loading icon
+      const loadingElm = document.querySelector('.loading-wrap');
+      loadingElm.classList.remove('d-none');
+
       // take data from answer input
       const answer = document.querySelector('#answer-input').value;
       data.answer = answer;
@@ -177,6 +184,9 @@ class UI {
 
       this.postData(vocabulariesAPI, data)
         .then(data => {
+          // hidden loading icon
+          loadingElm.classList.add('d-none');
+
           // add to DOM
           const createElm = document.querySelector('.item--user');
           const itemElm = document.createElement('div');

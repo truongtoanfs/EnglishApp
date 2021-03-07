@@ -103,6 +103,23 @@ body {
 .item--user .item-img {
   opacity: 0;
 }
+
+.loading-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.98);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+.loading-icon {
+  width: 100%;
+  height: auto;
+}
 /* item head */
 .trash-icon {
   color: var(--white-color);
