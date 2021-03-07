@@ -140,14 +140,26 @@ class UI {
       type: 'vocabulary',
     };
     // take data from image file
+    // compress image file: https://www.npmjs.com/package/browser-image-compression
     const fileElm = document.querySelector('.form-group__file');
     fileElm.addEventListener('change', function(event) {
       const file =  event.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = function() {
-        data.image = reader.result;
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1024,
+        useWebWorker: true
       }
-      reader.readAsDataURL(file);
+      imageCompression(file, options)
+        .then(function (compressedFile) {
+          const reader = new FileReader();
+          reader.onloadend = function() {
+            data.image = reader.result;
+          }
+          reader.readAsDataURL(compressedFile);
+        })
+        .catch(function (error) {
+          console.log(error.message);
+        });
     })
 
     const formSendBtn = document.querySelector('#send-form');
