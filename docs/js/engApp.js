@@ -1,5 +1,5 @@
 /* ########## variables ######### */
-const vocabulariesAPI = 'http://toan-english-app.herokuapp.com/vocabulary';
+const vocabulariesAPI = 'https://toan-english-app.herokuapp.com/vocabulary';
 //const vocabulariesAPI = 'http://localhost:3000/vocabulary';
 const content = document.querySelector('.content');
 
