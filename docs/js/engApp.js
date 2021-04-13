@@ -29,8 +29,8 @@ class UI {
         lastBtnText = 'Vocabulary';
       };
       html += `
-        <div class="item ${item.type} ${display}" data-id=${item._id}>
-          <img src=${item.image} alt=${item.answer} class="item-img">
+        <div class="item ${item.type} ${display}" data-id="${item._id}">
+          <img src="${item.image}" alt="${item.answer}" class="item-img">
           <div class="absolute-center item-head">
             <span class="trash-icon">
               <i class="fas fa-trash-alt fa-2x"></i>
@@ -193,7 +193,7 @@ class UI {
           itemElm.classList.add('item', 'vocabulary');
           itemElm.setAttribute('data-id', data._id);
           itemElm.innerHTML = `
-            <img src=${data.image} alt=${data.answer} class="item-img">
+            <img src="${data.image}" alt="${data.answer}" class="item-img">
             <div class="absolute-center item-head">
               <span class="trash-icon">
                 <i class="fas fa-trash-alt fa-2x"></i>
