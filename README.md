@@ -5,4 +5,4 @@ This app will help people remember new vocabulary a way easy
 + automatical add voice
 + test your memory
 + remove/recovey your words learned
-+ send notice the new word to mail
++ send notice the new word to mail (developing)
