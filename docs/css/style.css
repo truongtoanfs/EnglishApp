@@ -86,7 +86,12 @@ body {
   grid-row-gap: 2rem;
   grid-column-gap: 2rem;
 }
-
+.content-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 .item {
   max-width: 420px;
   margin: 0 auto;
