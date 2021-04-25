@@ -58,9 +58,9 @@ class UI {
     const div = document.createElement('div');
     div.classList.add('item', 'item--user');
     div.innerHTML = `
-      <img src="./img/img-add.jpg" alt="intuitive" class="item-img">
+      <img src="./img/img-add.jpg" alt="my avatar" class="item-img">
       <div class="loading-wrap d-none">
-        <img src="./img/loading.gif" alt="intuitive" class="loading-icon">
+        <img src="./img/loading.gif" alt="loading icon" class="loading-icon">
       </div>
       <form class="absolute-center create-item">
         <div class="form-group">
@@ -125,11 +125,8 @@ class UI {
     })
   }
 
-  // use card
   useCard() {
-    // create card
     this.createCard();
-    // handle card
     const cardItems = document.querySelectorAll('.item:not(.item--user)');
     cardItems.forEach(card => {
       this.handleCard(card);
@@ -168,7 +165,6 @@ class UI {
     formSendBtn.addEventListener('click', (event) => {
       event.preventDefault();
 
-      // show loading icon
       const loadingElm = document.querySelector('.loading-wrap');
       loadingElm.classList.remove('d-none');
 
@@ -183,7 +179,6 @@ class UI {
 
       this.postData(vocabulariesAPI, data)
         .then(data => {
-          // hidden loading icon
           loadingElm.classList.add('d-none');
 
           // add to DOM
@@ -219,7 +214,6 @@ class UI {
           createElm.querySelector('#answer-input').value = '';
           createElm.querySelector('.form-group__name').innerHTML = '';
           
-          // handle card
           this.handleCard(itemElm);
         })
         .catch((error) => {
@@ -241,7 +235,7 @@ class UI {
 
   removeCard(trashIcon) {
     const card = trashIcon.parentElement.parentElement;
-    // remove item in database
+
     fetch(vocabulariesAPI + '/' + card.dataset.id, {
       method: 'DELETE',
       headers: {
@@ -251,12 +245,10 @@ class UI {
       console.log(response);
     })
       
-    // remove item in DOM
     card.remove();
   }
 
   updateCard(card, content) {
-    // update item in database
     fetch(vocabulariesAPI + '/' + card.dataset.id, {
       method: 'PATCH',
       headers: {
@@ -303,27 +295,25 @@ class UI {
     const successCard = card.querySelector('.item-success');
 
     if (button.classList.contains('btn-delete')) {
-      // update card in db
       this.updateCard(card, 'recycleBin');
-      // add class recycleBin to card
+      
       card.classList.remove('vocabulary');
       card.classList.add('recycleBin');
-      // remove item in DOM
+      
       card.classList.add('d-none');
       this.toggleCard(headCard, successCard);
-      // change value of this button
+      
       button.textContent = 'Vocabulary';
       button.setAttribute('class', 'btn btn-vocabulary');
     } else {
-      // update card in db
       this.updateCard(card, 'vocabulary');
-      // add class vocabulary to card
+
       card.classList.add('vocabulary');
       card.classList.remove('recycleBin');
-      // remove item in DOM
+
       card.classList.add('d-none');
       this.toggleCard(headCard, successCard);
-      // change value of this button
+
       button.textContent = 'Delete';
       button.setAttribute('class', 'btn btn-delete');
     }
@@ -342,18 +332,15 @@ class UI {
     const answerInput = card.querySelector('.item-tail__answer');
     const cardMoveBtn = successCard.querySelector('button');
 
-    // add event click to trash icon
     trashIcon.addEventListener('click', () => {
       this.removeCard(trashIcon);
     })
 
-    // add event click to speaker
     speakerIcon.addEventListener('click', () => {
       const answerText = card.querySelector('.item-img').getAttribute('alt');
       this.say(answerText);
     })
 
-    // add event click to go button
     goBtn.addEventListener('click', () => {
       this.toggleCard(headCard, tailCard);
     })
@@ -402,9 +389,4 @@ document.addEventListener('DOMContentLoaded', () => {
     ui.switchTabs();
     ui.useCard();
   })
-
-})
-
-
-
-
+});
