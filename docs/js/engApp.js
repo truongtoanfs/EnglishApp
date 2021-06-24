@@ -1,5 +1,6 @@
 /* ########## variables ######### */
 const vocabulariesAPI = 'https://toan-english-app.herokuapp.com/vocabulary';
+//const vocabulariesAPI = 'http://localhost:3000/vocabulary';
 const content = document.querySelector('.content');
 
 class Vocabularies {
@@ -8,7 +9,7 @@ class Vocabularies {
       const result = await fetch(vocabulariesAPI);
       let vocabularies = await result.json();
       return vocabularies;
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }
@@ -84,7 +85,7 @@ class UI {
     const nameElm = document.querySelector('.form-group__name');
     fileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
-      const {name: fileName, size} = file;
+      const { name: fileName, size } = file;
       const fileSize = (size / 1000).toFixed(2);
       const fileNameAndSize = `${fileName} - ${fileSize}KB`;
       nameElm.innerHTML = fileNameAndSize;
@@ -123,6 +124,78 @@ class UI {
         })
       })
     })
+    // handle seting tab
+    this.setting();
+  }
+  setting() {
+    const setingBtn = document.querySelector('.seting-btn');
+    setingBtn.addEventListener('click', () => {
+      const initialMailState = {
+        mailSendState: document.querySelector('#send-mail-day').checked,
+        mailSendTime: document.querySelector('#send-mail-time').value,
+        mailAcount: document.querySelector('#email-acount').value,
+      };
+      const settingModal = document.querySelector('.setting');
+      const settingContent = document.querySelector('.setting-content');
+      const cancelBtn = document.querySelector('.form-group-setting .btn-cancel');
+      const saveBtn = document.querySelector('.form-group-setting button[type=submit]');
+
+      settingModal.classList.remove('d-none');
+      settingModal.addEventListener('click', () => {
+        this.closeSetting();
+      })
+
+      settingContent.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const targetElm = event.target;
+        if (targetElm === cancelBtn) {
+          event.preventDefault();
+          this.closeSetting();
+        } else if (targetElm === saveBtn) {
+          const endMailState = {
+            mailSendState: document.querySelector('#send-mail-day').checked,
+            mailSendTime: document.querySelector('#send-mail-time').value,
+            mailAcount: document.querySelector('#email-acount').value,
+          };
+          const isUpdate = this.checkUpdate(initialMailState, endMailState);
+          const isValidEmail = this.validateEmail(endMailState.mailAcount);
+
+          if (endMailState.mailSendState && !isValidEmail) {
+            event.preventDefault();
+            alert('Please Type right your email address');
+            return;
+          }
+          
+          if (!isUpdate) {
+            event.preventDefault();
+            this.closeSetting();
+          }
+          
+        }
+      })
+    })
+  }
+  closeSetting() {
+    const settingSection = document.querySelector('.setting');
+    settingSection.classList.add('d-none');
+  }
+  validateEmail(mail) {
+    const mailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    if (mailRegex.test(mail)) {
+      return true
+    }
+    return false;
+  }
+  checkUpdate(initialMailState, endMailState) {
+    if (!initialMailState.mailSendState && !endMailState.mailSendState) {
+      return false;
+    } else if (endMailState.mailSendState && 
+      endMailState.mailSendTime === initialMailState.mailSendTime &&
+      endMailState.mailAcount === initialMailState.mailAcount) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   useCard() {
@@ -141,8 +214,8 @@ class UI {
     // take data from image file
     // compress image file: https://www.npmjs.com/package/browser-image-compression
     const fileElm = document.querySelector('.form-group__file');
-    fileElm.addEventListener('change', function(event) {
-      const file =  event.target.files[0];
+    fileElm.addEventListener('change', function (event) {
+      const file = event.target.files[0];
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1024,
@@ -151,7 +224,7 @@ class UI {
       imageCompression(file, options)
         .then(function (compressedFile) {
           const reader = new FileReader();
-          reader.onloadend = function() {
+          reader.onloadend = function () {
             data.image = reader.result;
           }
           reader.readAsDataURL(compressedFile);
@@ -213,13 +286,13 @@ class UI {
           // reset createElm
           createElm.querySelector('#answer-input').value = '';
           createElm.querySelector('.form-group__name').innerHTML = '';
-          
+
           this.handleCard(itemElm);
         })
         .catch((error) => {
           console.error('Error:', error);
         })
-        
+
     })
   }
   async postData(vocabulariesAPI, data) {
@@ -244,7 +317,7 @@ class UI {
     }).then((response) => {
       console.log(response);
     })
-      
+
     card.remove();
   }
 
@@ -278,7 +351,7 @@ class UI {
   checkAnswer(card) {
     const textInput = card.querySelector('.item-tail__answer').value.trim();
     const answerText = card.querySelector('.item-img').getAttribute('alt');
-    const answer = new RegExp('^'+ answerText + '$', 'i');
+    const answer = new RegExp('^' + answerText + '$', 'i');
     const successCard = card.querySelector('.item-success');
     const tailCard = card.querySelector('.item-tail');
     if (answer.test(textInput)) {
@@ -296,13 +369,13 @@ class UI {
 
     if (button.classList.contains('btn-delete')) {
       this.updateCard(card, 'recycleBin');
-      
+
       card.classList.remove('vocabulary');
       card.classList.add('recycleBin');
-      
+
       card.classList.add('d-none');
       this.toggleCard(headCard, successCard);
-      
+
       button.textContent = 'Vocabulary';
       button.setAttribute('class', 'btn btn-vocabulary');
     } else {
@@ -368,7 +441,7 @@ class UI {
     closeSuccess.addEventListener('click', () => {
       this.toggleCard(headCard, successCard);
     })
-    
+
     // handle shift card
     cardMoveBtn.addEventListener('click', () => {
       this.moveCard(cardMoveBtn);
@@ -382,11 +455,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const ui = new UI();
 
   vocabularies.getVocabularies()
-  .then(vocabularies => {
-    ui.displayCards(vocabularies);
-  })
-  .then(() => {
-    ui.switchTabs();
-    ui.useCard();
-  })
+    .then(vocabularies => {
+      ui.displayCards(vocabularies);
+    })
+    .then(() => {
+      ui.switchTabs();
+      ui.useCard();
+    })
 });

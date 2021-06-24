@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3000;//port dependent host environment my pc / 
 
 // routes
 const route = require('./routes');
+
 // database
 const db = require('./config/db');//automatic into ./config/db/index.js
 
@@ -32,4 +33,4 @@ route(app);
 
 
  
-app.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

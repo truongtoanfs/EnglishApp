@@ -4,6 +4,7 @@
   --white-color: #f1f1f1;
   --red-color: red;
   --green-color: #03c703;
+  --dark-transparent: rgba(0, 0, 0, 0.75);
 }
 
 body {
@@ -28,6 +29,9 @@ body {
 .btn--active {
   border-color: var(--black-color);
   background-color: #CCCCCC;
+}
+.btn-cancel {
+  background: yellow;
 }
 
 .absolute-center {
@@ -237,6 +241,41 @@ body {
   background-color: var(--white-color);
   padding: 1.25rem;
   border: 2px solid var(--green-color);
+}
+
+/* ================== setting section ==================== */
+.setting {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: var(--dark-transparent);
+}
+.setting-content {
+  background-color: #fff;
+  margin: 100px auto 0;
+  width: 90%;
+  max-width: 992px;
+  padding: 40px 20px 20px;
+  font-size: 14px;
+}
+.form-group-setting {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+.form-group-setting label {
+  margin-right: 12px;
+}
+.form-group-setting--day input {
+  width: 22px;
+  height: 22px;
+}
+.form-group-setting--control {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 40px;
 }
 
 

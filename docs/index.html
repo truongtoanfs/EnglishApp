@@ -20,13 +20,35 @@
         <button class="btn filter-btn btn--active" data-filter="vocabulary">Vocabulary</button>
         <button class="btn filter-btn" data-filter="recycleBin">Recycle Bin</button>
         <button class="btn filter-btn" data-filter="all">All</button>
+        <button class="btn seting-btn">Setting</button>
       </nav>
       <section class="content">
         <h2 class="content-loading">Data is loading, please wait a moment</h2>
       </section>
+      <section class="setting d-none">
+        <div class="setting-content">
+          <form action="/post-email" method="post">
+            <div class="form-group-setting form-group-setting--day">
+              <label for="day">Send Vocabulary to my email every day</label>
+              <input type="checkbox" name="sendEmail" id="send-mail-day">
+            </div>
+            <div class="form-group-setting">
+              <label for="time">Choose an time</label>
+              <input type="time" name="hour" id="send-mail-time" value="06:00">
+            </div>
+            <div class="form-group-setting">
+              <label for="email">your email account</label>
+              <input type="email" name="email" id="email-acount" placeholder="englishApp@gmail.com">
+            </div>
+            <div class="form-group-setting form-group-setting--control">
+              <button class="btn" type="submit">Save</button>
+              <button class="btn btn-cancel">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
     </div>
   </main>
-
   <!-- compress image files -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
   <script src="./js/engApp.js"></script>
